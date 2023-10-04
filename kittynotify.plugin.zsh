@@ -21,7 +21,12 @@ if ! (type kittynotify_formatted | grep -q 'function'); then ## allow custom fun
   }
 fi
 
-kittynotify_python="import json,sys;obj=json.load(sys.stdin);print(obj[0]['tabs'][0]['windows'][0]['id'])"
+kittynotify_python="import json,sys
+obj=json.load(sys.stdin)
+if len(obj) and obj[0]['is_active'] and not obj[0]['is_focused']:
+  print(-1)
+else:
+  print(obj[0]['tabs'][0]['windows'][0]['id'])"
 
 currentWindowId () {
   echo "$(kitty @ ls --match state:focused | python -c $kittynotify_python )"
